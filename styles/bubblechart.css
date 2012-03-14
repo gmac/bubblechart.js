@@ -1,0 +1,170 @@
+/* Bubble Chart visual styles.
+* -------------------------------------- */
+.bc-module {
+	background-color:#fff;
+}
+.bc-display {
+	background-color:#fff;
+	position:relative;
+}
+.bc-display .bc-paper {
+	height:100%;
+	position:relative;
+	width:100%;
+}
+.bc-display span {
+	position:absolute;
+}
+.bc-display .title {
+	display:block;
+	font:bold 10px/16px Arial,sans-serif;
+	text-transform:uppercase;
+	text-align:center;
+}
+.bc-display .subhead,
+.bc-display .axisX,
+.bc-display .axisY {
+	display:block;
+	font:10px/1em Arial,sans-serif;
+	text-align:center;
+}
+.bc-display .axisY {
+	transform: rotate(-90deg);
+	transform-origin: 0 0;
+	-moz-transform: rotate(-90deg); /* Firefox */
+	-moz-transform-origin: 0 0; /* Firefox */
+	-ms-transform: rotate(-90deg); /* IE 9 */
+	-ms-transform-origin: 0 0; /* IE 9 */
+	-o-transform: rotate(-90deg); /* Opera */
+	-o-transform-origin: 0 0; /* Opera */
+	-webkit-transform: rotate(-90deg); /* Safari and Chrome */
+	-webkit-transform-origin: 0 0; /* Safari and Chrome */
+}
+.ie7 .bc-display .rotateY,
+.ie8 .bc-display .rotateY {
+	/* Important: apply this style separately from basic y-style.
+	We'll need to perform metrics on basic layout before applying rotation. */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	left:2px !important;
+	top:2px !important;
+}
+.bc-display .tickX,
+.bc-display .tickY {
+	font:10px/1em Arial,sans-serif;
+}
+.bc-display .tickY {
+	text-align:right;
+}
+.bc-display .ruleX {
+	border-left:1px solid #c0d0e0;
+	display:block;
+}
+.bc-display .ruleY {
+	border-top:1px solid #c0c0c0;
+	display:block;
+}
+.bc-display img {
+	position:absolute;
+	z-index:1;
+}
+.bc-display img.active {
+	z-index:2;
+}
+.bc-display-tooltip {
+	background-color:rgba(0,0,0,0.75);
+	border:1px solid #000;
+	color:#FFF;
+	padding:1px 4px;
+	position:absolute;
+	z-index:3;
+}
+.ie7 .bc-display-tooltip,
+.ie8 .bc-display-tooltip {
+	background-color:#666;
+}
+.bc-display-image {
+	display:none;
+}
+.bc-controls {
+	color:#000;
+	height:35px;
+	position:relative;
+}
+.bc-controls-playback {
+	background:url(../images/bc-playback.png) no-repeat 0 0;
+	border:none;
+	cursor:pointer;
+	height:29px;
+	overflow:hidden;
+	text-indent:-500px;
+	width:29px;
+}
+.bc-controls-playback.playing {
+	background-position:0 bottom;
+}
+.bc-controls-timeline {
+	height:100%;
+	left:48px;
+	position:absolute;
+	top:6px;
+}
+.bc-timeline-years,
+.bc-timeline-scrub-range {
+	position:absolute;
+	top:0;
+	width:100%;
+}
+
+.bc-timeline-years {
+	height:100%;
+	left:0;
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+.bc-timeline-years li {
+	border-left:1px solid #ccc;
+	height:15px;
+	margin:0;
+	padding:0;
+	position:absolute;
+	top:0;
+}
+.bc-timeline-years li button {
+	background:none;
+	border:none;
+	color:#333;
+	cursor:pointer;
+	font-size:9px;
+	left:-15px;
+	padding:0;
+	position:absolute;
+	text-align:center;
+	text-decoration:none;
+	top:16px;
+	width:30px;
+}
+.bc-timeline-years li.hanging button {
+	left:0;
+}
+.bc-timeline-years li button:hover {
+	text-decoration:underline;
+}
+.bc-timeline-years li button:active {
+	text-decoration:underline;
+}
+.bc-timeline-scrub-range {
+	background-color:rgba(255,255,255,0.5);
+	border:1px solid #ccc;
+	height:9px;
+	left:0;
+	overflow:visible;
+}
+.bc-timeline-scrub-head {
+	background:url(../images/bc-position.png) no-repeat;
+	display:block;
+	height:15px;
+	position:absolute;
+	top:-6px;
+	width:9px;
+}

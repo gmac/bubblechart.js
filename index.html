@@ -1,0 +1,77 @@
+<html>
+<head>
+	<link rel="stylesheet" href="styles/bubblechart.css" type="text/css" media="screen"/>
+	<style>
+	body {
+		background-color:#666;
+		font:10px/1.5em Arial, Helvetica, sans-serif;
+	}
+	#page {
+		margin:25px auto;
+		overflow:hidden;
+		position:relative;
+		width:600px;
+	}
+	</style>
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bubblechart.js"></script>
+	<script type="text/javascript">
+		var bc;
+		$(document).ready(function(){
+			bc = new BubbleChart({
+				renderTo: 'bc1',
+				renderer: 'svg',
+				graphHeight:400,
+				margin:5,
+				padding:3,
+				nodeImage:'images/bubble-{#}.png',
+				tooltipFormat: function(node) {
+					return node.label;
+				}
+			});
+
+			bc.load({
+				title:"GNI Per Capita by Fragility",
+				subhead:"Bubble Size Represents Poverty",
+				csv:"data.csv",
+				axisX:{
+					label:"GNI per capita",
+					type:"DataType"
+				},
+				axisY:{
+					label:"Fragility",
+					type:"DataType"
+				},
+				axisZ:{
+					label:"Poverty",
+					type:"DataType"
+				},
+				axisC:{
+					label:"Region",
+					type:"DataType"
+				},
+				style:{
+					minRadius:5,
+					maxRadius:25
+				},
+				palette: [
+					"#053769",
+					"#4a8fde",
+					"#dd7b1a",
+					"#91b571",
+					"#d4c4a1"
+				]
+			});
+		});
+	</script>
+</head>
+<body>
+
+	<div id="page">
+		<div id="bc1" style="background-color:#fff;width:500px;"></div>
+		<p><a href="js/bubblechart.js">javascript</a></p>
+	</div>
+
+</body>
+</html>
