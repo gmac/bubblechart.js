@@ -1,0 +1,18 @@
+Time-based Bubble Chart (scatter plot)
+By Greg MacWilliam.
+Released under MIT license.
+
+For demonstration, see: http://lassiegames.com/tests/bubblechart
+
+This chart loads in year-based data, which is aggregated into a timeline that may be scrubbed and/or played as an animation. The chart currently supports data plotted on three axes: horizontal (X), vertical (Y), and bubble size (Z). Data must be loaded as CSV with the following format (requires three rows of headers):
+
+labels,Income,Growth,Change,Income,Growth,Change
+types,number,percent,number,number,percent,number
+years,2009,2009,2009,2010,2010,2010
+Location-A,0,0,0,0,0,0
+Location-B,0,0,0,0,0,0
+
+
+The chart display may be rendered using SVG graphics or the HTML DOM. VML rendering in IE7/8 is not supported due to extremely poor performance with large numbers of nodes. While the HTML renderer is not as smooth as the SVG renderer, it is equally performant in older browsers.
+
+Planned features include hooking bubble color in as a fourth axis of data.

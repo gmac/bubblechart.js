@@ -839,8 +839,8 @@ BubbleChart.Display.prototype = {
 		var model = this.chart.model,
 			nodes = this.chart.nodes,
 			year = model.axisX.getYear(scrub),
-			areaMin = model.minRadius * model.minRadius,
-			areaDelta = model.maxRadius * model.maxRadius - areaMin,
+			areaMin = model.minRadius * model.minRadius * 2,
+			areaDelta = model.maxRadius * model.maxRadius * 2 - areaMin,
 			area,
 			node,
 			visible,
@@ -976,7 +976,7 @@ BubbleChart.Display.prototype = {
 			gl = m, // graph left
 			gw = 0, // graph width (must be solved for)
 			gh = 0, // graph height (must be solved for)
-			inset = model.maxRadius+2,
+			inset = model.maxRadius,
 			// Layout elements
 			ticksX = [],
 			ticksY = [],
