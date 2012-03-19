@@ -40,8 +40,7 @@
 	-webkit-transform: rotate(-90deg); /* Safari and Chrome */
 	-webkit-transform-origin: 0 0; /* Safari and Chrome */
 }
-.ie7 .bc-display .rotateY,
-.ie8 .bc-display .rotateY {
+.ie .rotateY {
 	/* Important: apply this style separately from basic y-style.
 	We'll need to perform metrics on basic layout before applying rotation. */
 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
@@ -78,8 +77,7 @@
 	position:absolute;
 	z-index:3;
 }
-.ie7 .bc-display-tooltip,
-.ie8 .bc-display-tooltip {
+.ie .bc-display-tooltip {
 	background-color:#666;
 }
 .bc-display-image {

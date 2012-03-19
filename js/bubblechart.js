@@ -147,10 +147,7 @@ BubbleChart.prototype = (function() {
 			this.options = null;
 			this.display = null;
 			this.controls = null;
-			
-			while (this.nodes.length) {
-				this.nodes.pop();
-			}
+			this.nodes.length = 0;
 			this.nodes = null;
 		}
 	};
@@ -371,7 +368,7 @@ BubbleChart.Model.Axis = function(id, config) {
 	this.label = config.label;
 	this.type = config.type;
 	this.enabled = (id === 'x' || id === 'y' || !!config.label);
-	this.formatter = (config.formatter ? config.formatter : BubbleChart.utils.formatNumber);
+	this.formatter = (!!config.formatter ? config.formatter : BubbleChart.utils.formatNumber);
 	this.minPadding = (config.minPadding || 0);
 	this.maxPadding = (config.maxPadding || 0);
 	this.min = (config.min || NaN);
@@ -626,9 +623,8 @@ BubbleChart.Model.Axis.prototype = (function() {
 		
 		destroy: function() {
 			this.formatter = null;
-			while (this.columns.length) {
-				this.columns.pop();
-			}
+			this.columns.length = 0;
+			this.columns = null;
 		}
 	};
 }());
@@ -712,9 +708,8 @@ BubbleChart.Node.prototype = {
 // -------------------------------------------------------
 BubbleChart.Display = function(chart) {
 	var opts = chart.options,
-		hasSvg = (!!document.createElementNS && !!document.createElementNS(this.svgNS, 'svg').createSVGRect),
 		self = this;
-
+	
 	this.chart = chart;
 	this.view = $('<div/>')
 		.addClass('bc-display')
@@ -722,11 +717,14 @@ BubbleChart.Display = function(chart) {
 		.height(opts.graphHeight)
 		.appendTo(opts.renderTo);
 	this.tooltip = $('<div/>').addClass('bc-display-tooltip').hide();
-	this.html = (opts.renderer === 'html' || !hasSvg);
-	this.tooltipFormat = (opts.tooltipFormat ? opts.tooltipFormat : function(n) { return n.label; }); 
+	this.html = (opts.renderer === 'html' || !this.hasSVG());
+	this.tooltipFormat = (!!opts.tooltipFormat ? opts.tooltipFormat : function(n) { return n.label; }); 
 	
 	if (this.html) {
 		this.paper = this.view;
+		if ($.browser.msie) {
+			this.view.addClass('ie');
+		}
 	} else {
 		this.paper = document.createElementNS(this.svgNS, 'svg');
 		this.paper.setAttribute('xmlns', this.svgNS);
@@ -769,6 +767,17 @@ BubbleChart.Display.prototype = {
 	tooltipFormat: null,
 	topNode: -1,
 	scrub:0,
+	
+	// Test for SVG capabilities.
+	hasSVG: function() {
+		if (!!document.createElementNS && !!document.createElementNS(this.svgNS, 'svg').createSVGRect) {
+			return true;
+		} else {
+			var div = document.createElement('div');
+			div.innerHTML = '<svg/>';
+			return (div.firstChild && div.firstChild.namespaceURI) === this.svgNS;
+		}
+	},
 	
 	// Clears the bubble chart display.
 	clear: function() {
@@ -910,7 +919,7 @@ BubbleChart.Display.prototype = {
 		// Set chart title with current year (when changed).
 		if (year !== this.graphYear) {
 			this.graphYear = year;
-			year = (model.title ? model.title.toUpperCase()+" " : "") + year;
+			year = (model.title ? model.title.toUpperCase()+", " : "") + year;
 			
 			if (this.html) {
 				this.headerText.text( year );
@@ -993,15 +1002,17 @@ BubbleChart.Display.prototype = {
 			rule,
 			pos,
 			ele,
+			x,
+			y,
 			i;
 		
-		// Creates an SVG style string for text elements.
 		function textStyle(size, color, anchor, bold) {
-			var style = 'font-family:arial,helvetica,sans-serif;font-size:{size}px;color:{color};text-anchor:{anchor};';
-			if (bold) {
-				style += 'font-weight:bold;';
-			}
-			return style.replace('{size}', size).replace('{color}', color).replace('{anchor}', anchor);
+			var style = 'font-family:arial,helvetica,sans-serif;';
+			style += 'font-size:'+size+'px;';
+			style += 'color:'+color+';fill:'+color+';';
+			style += 'text-anchor:'+anchor+';';
+			style += (bold ? 'font-weight:bold;' : '');
+			return style;
 		}
 		
 		// CREATION PASS
@@ -1009,7 +1020,7 @@ BubbleChart.Display.prototype = {
 		if (this.html) {
 			this.paper.empty();
 		} else {
-			//$(this.paper).empty();
+			$(this.paper).empty();
 			ele = document.createElementNS(this.svgNS, 'rect');
 			ele.setAttribute('x', 0);
 			ele.setAttribute('y', 0);
@@ -1037,7 +1048,6 @@ BubbleChart.Display.prototype = {
 				this.labelTextY = document.createElementNS(this.svgNS, 'text');
 				this.labelTextY.appendChild( document.createTextNode(model.axisY.title) );
 				this.labelTextY.setAttribute('style', textStyle(10, '#000', 'middle'));
-				this.labelTextY.setAttribute('transform', 'rotate(-90 0,0)');
 				this.paper.appendChild(this.labelTextY);
 				gl += this.labelTextY.getBBox().height+p;
 			}
@@ -1140,8 +1150,8 @@ BubbleChart.Display.prototype = {
 			} else {
 				ele = document.createTextNode( model.axisX.formatter(tickValue) );
 				tick = document.createElementNS(this.svgNS, 'text');
-				tick.setAttribute('width', 50);
 				tick.setAttribute('style', textStyle(10, '#666', 'middle'));
+				tick.setAttribute('width', 50);
 				tick.appendChild(ele);
 				this.paper.appendChild(tick);
 
@@ -1227,9 +1237,12 @@ BubbleChart.Display.prototype = {
 				});
 			} else {
 				bbox = this.labelTextY.getBBox();
-				this.labelTextY.setAttribute('x', Math.round(m+bbox.height/2));
-				this.labelTextY.setAttribute('y', gt+Math.round(gh/2));
+				x = Math.round(m+bbox.height/2);
+				y = gt+Math.round(gh/2);
+				this.labelTextY.setAttribute('x', x);
+				this.labelTextY.setAttribute('y', y);
 				this.labelTextY.setAttribute('width', gh);
+				this.labelTextY.setAttribute('transform', 'rotate(-90 '+x+' '+y+')');
 			}
 		}
 		
@@ -1257,7 +1270,7 @@ BubbleChart.Display.prototype = {
 						.appendTo(this.paper);
 				} else {
 					tick.setAttribute('x', gl-p);
-					tick.setAttribute('y', pos);
+					tick.setAttribute('y', pos+3);
 
 					ele = document.createElementNS(this.svgNS, 'line');
 					ele.setAttribute('x1', gl);
@@ -1291,7 +1304,7 @@ BubbleChart.Display.prototype = {
 						.css({
 							left:pos,
 							top:gb,
-							height:Math.ceil(inset*0.75),
+							height:Math.ceil(inset*0.65),
 							width:1
 						})
 						.appendTo(this.paper);
@@ -1303,7 +1316,7 @@ BubbleChart.Display.prototype = {
 					ele.setAttribute('x1', pos);
 					ele.setAttribute('y1', gb);
 					ele.setAttribute('x2', pos);
-					ele.setAttribute('y2', gb+Math.ceil(inset*0.75));
+					ele.setAttribute('y2', gb+Math.ceil(inset*0.65));
 					ele.setAttribute('style', 'stroke-width:1;stroke:#c0d0e0;');
 					this.paper.appendChild(ele);
 				}
